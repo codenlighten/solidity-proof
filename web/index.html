@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vault dApp</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
+  input, button { font: inherit; padding: .4rem .6rem; }
+  #msg { min-height: 1.5rem; }
+  .err { color: #b00020; }
+</style>
+</head>
+<body>
+<h1>Vault</h1>
+<p>Vault address: <input id="addr" size="44" placeholder="0x..."></p>
+<p>Chain ID: <input id="chain" size="8" value="11155111"></p>
+<p><button id="connect">Connect wallet</button></p>
+<p>Balance: <strong id="bal">-</strong> ETH</p>
+<p><input id="amt" value="0.01" size="8"> ETH
+   <button id="dep">Deposit</button> <button id="wd">Withdraw</button></p>
+<p id="msg" role="status"></p>
+<script type="module">
+  import { VaultClient, friendlyError } from "./vault-client.js";
+  const $ = (id) => document.getElementById(id);
+  let client;
+  const say = (t, err) => { $("msg").textContent = t; $("msg").className = err ? "err" : ""; };
+  const refresh = async () => { $("bal").textContent = await client.balance(); };
+  const act = (fn) => async () => {
+    try { say("Waiting for wallet..."); await fn(); await refresh(); say("Done."); }
+    catch (e) { say(friendlyError(e), true); }
+  };
+  $("connect").onclick = act(async () => {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    client = await VaultClient.connect(window.ethereum, $("addr").value.trim(), $("chain").value.trim());
+    await refresh();
+  });
+  // The client is bound to one account and chain: reload instead of acting on a stale binding.
+  if (window.ethereum) for (const ev of ["accountsChanged", "chainChanged"]) window.ethereum.on(ev, () => location.reload());
+  $("dep").onclick = act(() => client.deposit($("amt").value));
+  $("wd").onclick = act(() => client.withdraw($("amt").value));
+</script>
+</body>
+</html>

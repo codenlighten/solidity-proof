@@ -1,0 +1,9 @@
+node_modules
+cache
+artifacts
+coverage
+coverage.json
+.env
+typechain-types
+foundry/out
+foundry/cache

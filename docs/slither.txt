@@ -1,0 +1,21 @@
+INFO:Detectors:
+Detector: costly-loop
+AirdropNaive.distribute(address[],uint256) (contracts/gas/AirdropNaive.sol#14-21) has costly operations inside a loop:
+	- total = total + amount (contracts/gas/AirdropNaive.sol#18)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#costly-operations-inside-a-loop
+INFO:Detectors:
+Detector: low-level-calls
+Low level call in Collectible.withdraw() (contracts/Collectible.sol#38-41):
+	- (ok,None) = owner().call{value: address(this).balance}() (contracts/Collectible.sol#39)
+Low level call in VaultV1.withdraw(uint256) (contracts/VaultV1.sol#31-38):
+	- (ok,None) = msg.sender.call{value: amount}() (contracts/VaultV1.sol#36)
+Low level call in VaultV2.claimFees() (contracts/VaultV2.sol#28-34):
+	- (ok,None) = owner().call{value: amount}() (contracts/VaultV2.sol#32)
+Low level call in VaultV2.withdraw(uint256) (contracts/VaultV2.sol#36-48):
+	- (ok,None) = msg.sender.call{value: amount - fee}() (contracts/VaultV2.sol#46)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+INFO:Detectors:
+Detector: immutable-states
+AirdropNaive.owner (contracts/gas/AirdropNaive.sol#6) should be immutable 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Slither:. analyzed (60 contracts with 102 detectors), 6 result(s) found
