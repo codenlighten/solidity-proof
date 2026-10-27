@@ -93,8 +93,8 @@ describe("Integration: deploy, upgrade, index, client", () => {
 });
 
 describe("Front-end client", () => {
-  let friendlyError;
-  before(async () => ({ friendlyError } = await import("../web/vault-client.js")));
+  let friendlyError, ClientError;
+  before(async () => ({ friendlyError, ClientError } = await import("../web/vault-client.js")));
 
   it("maps custom errors and wallet rejection to readable messages", async () => {
     const [admin, alice] = await ethers.getSigners();
@@ -107,6 +107,8 @@ describe("Front-end client", () => {
     // an outer data string that is not ours must not hide a decodable inner error
     expect(friendlyError({ data: "0xdeadbeef", info: { error: { data: caught.data } } }))
       .to.equal("Amount is more than your vault balance.");
+    expect(friendlyError(new ClientError("Wrong network: connected to chain 1, expected 31337."))).to.equal(
+      "Wrong network: connected to chain 1, expected 31337.");
     expect(friendlyError({})).to.equal("The transaction failed. Check the amount and try again.");
   });
 

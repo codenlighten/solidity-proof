@@ -14,7 +14,7 @@ Every claim below maps to a file you can run.
 | Foundry | `foundry.toml`, `foundry/test/`: 1000-run fuzz tests, differential fuzzing (naive vs optimized airdrop), and a stateful invariant suite (256 runs × depth 100 = 25,600 calls) with an independent ledger model; 15 tests |
 | Unit and integration tests | `test/`: 38 tests; upgrade flows, seeded stateful invariant tests of the vault across an upgrade, an event-driven indexer checked against chain state |
 | Backend integration | `scripts/indexer.js`: rebuilds vault balances from events and verifies them against the chain; `scripts/deploy.js`, `scripts/upgrade.js` |
-| Front-end dApp | `web/vault-client.js` (tested data layer, readable revert messages) and `web/index.html` (wallet UI; the HTML is not browser-tested) |
+| Front-end dApp | `web/vault-client.js` (tested data layer, readable revert messages) and `web/index.html` (wallet UI), browser-tested end to end with `npm run e2e` (8 checks in headless Chrome against a local node) |
 | Security tooling | Slither 0.11.6, solc 0.8.28; output in `docs/slither.txt`, dispositions below |
 | Code review and decisions | `docs/DECISIONS.md` |
 
@@ -97,7 +97,14 @@ transaction depth 3, so this is bounded evidence, not proof). Results: no issues
 - `scripts/indexer.js`: confirmation depth, reorg detection by block hash (rebuilds on mismatch), chunked
   log scans, serialized `sync()`. Not covered: persistence across restarts.
 - `web/vault-client.js`: binds to an expected chain id, checks the address has code, walks nested wallet
-  and ethers errors. The UI reloads on `accountsChanged` and `chainChanged`. `web/index.html` is not browser-tested.
+  and ethers errors. The UI reloads on `accountsChanged` and `chainChanged`.
+- Browser end-to-end test (`npm run e2e`, needs Chrome or Chromium): starts a local Hardhat node, deploys,
+  loads the real `web/index.html` in headless Chrome with a mock wallet (`web/e2e/mock-wallet.js`, which
+  forwards to the node and holds no keys), and clicks through connect, deposit, withdraw, over-withdraw,
+  wallet rejection, wrong chain id and an address with no contract. What it found: the page could not
+  load at all (the module imports the bare name `ethers`, which a browser cannot resolve without an import
+  map), and errors from the client's own checks were shown as a generic message. Both are fixed; removing
+  the import map makes the test fail. Not covered: a real wallet extension, mobile layouts, accessibility audits.
 
 ## Operational notes
 

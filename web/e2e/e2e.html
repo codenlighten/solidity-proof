@@ -1,0 +1,81 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>e2e</title>
+<pre id="result">running</pre>
+<script type="module">
+  // Loads the REAL web/index.html with a mock wallet in place, then drives its buttons.
+  const params = new URLSearchParams(location.search);
+  const vault = params.get("vault");
+  const rpc = params.get("rpc") ?? "http://127.0.0.1:8545";
+
+  // The real web/index.html, with the mock wallet installed in its head, inside a same-origin iframe.
+  const html = await (await fetch("../index.html")).text();
+  const base = new URL("../", location.href).href;
+  const inject = `<base href="${base}"><script type="module">
+    import { installMockWallet } from "./e2e/mock-wallet.js";
+    installMockWallet(${JSON.stringify(rpc)});
+  <\/script>`;
+  const frame = document.createElement("iframe");
+  frame.style.cssText = "width:600px;height:500px";
+  frame.srcdoc = html.replace("<head>", "<head>" + inject);
+  document.body.append(frame);
+  await new Promise((r) => (frame.onload = r));
+  const win = frame.contentWindow;
+  const $ = (id) => frame.contentDocument.getElementById(id);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const waitFor = async (fn, what, ms = 15000) => {
+    const t = Date.now();
+    while (Date.now() - t < ms) { if (fn()) return; await sleep(100); }
+    throw new Error("timeout waiting for " + what + "; page says: [" + ($("msg") && $("msg").textContent) + "] class=" + ($("msg") && $("msg").className));
+  };
+  const results = [];
+  const check = (name, ok, detail) => results.push({ name, ok: !!ok, detail });
+  const press = async (id, until) => { $("msg").textContent = ""; $(id).click(); await waitFor(until, id + " result"); };
+  const settled = () => $("msg").textContent === "Done." || $("msg").className === "err";
+
+  try {
+    await waitFor(() => $("connect") && $("addr"), "page");
+    $("addr").value = vault;
+    $("chain").value = "31337";
+
+    await press("connect", () => $("bal").textContent !== "-" || $("msg").className === "err");
+    const near = (a, b) => Math.abs(a - b) < 1e-9;
+    const bal = () => parseFloat($("bal").textContent);
+    const start = bal(); // the chain may already hold a balance from an earlier run
+    check("connect shows a numeric balance", Number.isFinite(start), $("bal").textContent);
+
+    $("amt").value = "1.0";
+    await press("dep", settled);
+    check("deposit 1.0 raises balance by 1.0", near(bal(), start + 1), $("bal").textContent + " / " + $("msg").textContent);
+
+    $("amt").value = "0.4";
+    await press("wd", settled);
+    check("withdraw 0.4 lowers balance by 0.4", near(bal(), start + 0.6), $("bal").textContent + " / " + $("msg").textContent);
+
+    $("amt").value = "5000";
+    await press("wd", settled);
+    check("over-withdraw shows readable error", $("msg").className === "err" && $("msg").textContent === "Amount is more than your vault balance.", $("msg").textContent);
+    check("balance unchanged after failed withdraw", near(bal(), start + 0.6), $("bal").textContent);
+
+    win.__rejectNext = true;
+    $("amt").value = "0.1";
+    await press("dep", settled);
+    check("wallet rejection shows readable error", $("msg").textContent === "Transaction rejected in wallet.", $("msg").textContent);
+
+    $("chain").value = "1";
+    await press("connect", settled);
+    check("wrong chain id is refused", $("msg").className === "err" && /Wrong network/.test($("msg").textContent), $("msg").textContent);
+
+    $("chain").value = "31337";
+    $("addr").value = "0x000000000000000000000000000000000000dEaD";
+    await press("connect", settled);
+    check("address with no contract is refused", $("msg").className === "err" && /No contract/.test($("msg").textContent), $("msg").textContent);
+  } catch (e) {
+    check("e2e ran to completion", false, String(e));
+  }
+  const pre = document.createElement("pre");
+  pre.id = "result";
+  pre.textContent = JSON.stringify({ allPass: results.every((r) => r.ok), results, pageErrors: [] }, null, 1);
+  document.body.append(pre);
+  document.title = "DONE";
+</script>

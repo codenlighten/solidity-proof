@@ -20,6 +20,11 @@
 <p><input id="amt" value="0.01" size="8"> ETH
    <button id="dep">Deposit</button> <button id="wd">Withdraw</button></p>
 <p id="msg" role="status"></p>
+<!-- vault-client.js imports the bare name "ethers"; a browser needs an import map to resolve it.
+     Pinned to the same version as package.json. -->
+<script type="importmap">
+  { "imports": { "ethers": "https://cdn.jsdelivr.net/npm/ethers@6.17.0/+esm" } }
+</script>
 <script type="module">
   import { VaultClient, friendlyError } from "./vault-client.js";
   const $ = (id) => document.getElementById(id);

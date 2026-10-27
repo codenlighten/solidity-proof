@@ -12,6 +12,9 @@ export const VAULT_ABI = [
 ];
 
 const iface = new Interface(VAULT_ABI);
+
+/** An error whose message is already written for the user (wrong network, no contract). */
+export class ClientError extends Error {}
 const MESSAGES = {
   InsufficientBalance: "Amount is more than your vault balance.",
   TransferFailed: "The ETH transfer failed.",
@@ -44,6 +47,7 @@ export function friendlyError(err) {
   for (const e of chain(err)) {
     if (e.code === "ACTION_REJECTED" || e.code === 4001) return "Transaction rejected in wallet.";
   }
+  if (err instanceof ClientError) return err.message;
   const name = revertName(err);
   if (name && MESSAGES[name]) return MESSAGES[name];
   return "The transaction failed. Check the amount and try again.";
@@ -60,9 +64,9 @@ export class VaultClient {
     const provider = new BrowserProvider(ethereum);
     const { chainId } = await provider.getNetwork();
     if (chainId !== BigInt(expectedChainId)) {
-      throw new Error(`Wrong network: connected to chain ${chainId}, expected ${expectedChainId}.`);
+      throw new ClientError(`Wrong network: connected to chain ${chainId}, expected ${expectedChainId}.`);
     }
-    if ((await provider.getCode(vaultAddress)) === "0x") throw new Error("No contract at that address on this chain.");
+    if ((await provider.getCode(vaultAddress)) === "0x") throw new ClientError("No contract at that address on this chain.");
     const signer = await provider.getSigner();
     return new VaultClient(new Contract(vaultAddress, VAULT_ABI, signer), await signer.getAddress());
   }
