@@ -32,6 +32,26 @@ describe("Vault (UUPS upgradeable)", () => {
     expect(await ethers.provider.getBalance(await vault.getAddress())).to.equal(100n);
   });
 
+  it("must-fail: re-entering to withdraw the REST of a legitimate balance is blocked by the guard", async () => {
+    // checks-effects-interactions alone does not stop this: the remaining balance is really there
+    const { vault, alice } = await deployV1();
+    await vault.connect(alice).deposit({ value: 100n });
+    const atk = await ethers.deployContract("PartialReentrancyAttacker", [await vault.getAddress()]);
+    await expect(atk.attack({ value: 20n })).to.be.revertedWithCustomError(vault, "TransferFailed");
+    expect(await vault.balanceOf(await atk.getAddress())).to.equal(0n); // whole tx reverted, incl. the deposit
+    expect(await ethers.provider.getBalance(await vault.getAddress())).to.equal(100n);
+  });
+
+  it("must-fail: the same partial-withdrawal re-entry is blocked on V2 (its own withdraw has its own guard)", async () => {
+    const { vault, alice } = await deployV1();
+    const V2 = await ethers.getContractFactory("VaultV2");
+    const v2 = await upgrades.upgradeProxy(vault, V2, { call: { fn: "initializeV2", args: [0] } });
+    await v2.connect(alice).deposit({ value: 100n });
+    const atk = await ethers.deployContract("PartialReentrancyAttacker", [await v2.getAddress()]);
+    await expect(atk.attack({ value: 20n })).to.be.revertedWithCustomError(v2, "TransferFailed");
+    expect(await ethers.provider.getBalance(await v2.getAddress())).to.equal(100n);
+  });
+
   it("harness check: the same attacker DOES drain a vault that sends before debiting", async () => {
     const [, alice] = await ethers.getSigners();
     const bad = await ethers.deployContract("VulnerableVault");

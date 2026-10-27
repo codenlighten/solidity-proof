@@ -10,7 +10,8 @@
     "gas": "REPORT_GAS=true hardhat test",
     "test:foundry": "forge test",
     "slither": "slither . --compile-force-framework hardhat --hardhat-ignore-compile --filter-paths \"node_modules|contracts/test\" --exclude-dependencies",
-    "e2e": "scripts/e2e.sh"
+    "e2e": "scripts/e2e.sh",
+    "mythril": "scripts/mythril.sh"
   },
   "keywords": [],
   "author": "",
