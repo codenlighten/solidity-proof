@@ -7,3 +7,6 @@ coverage.json
 typechain-types
 foundry/out
 foundry/cache
+
+# iptrust private evidence: never commit (see IP.md)
+.iptrust/
