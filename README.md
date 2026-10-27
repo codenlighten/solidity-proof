@@ -26,7 +26,7 @@ recorded, and each was checked against the code before acting on it.
 | CI | 5 jobs on every push: Hardhat tests, Foundry tests, Slither (report only), gitleaks, browser end-to-end. Coverage, Mythril and the mutation runs are manual |
 | Not audited | Demonstration code. Do not deploy it with real funds. |
 
-## What the posting asks for, and where it is
+## Skills this repo demonstrates, and where
 
 | Requirement | Evidence |
 |---|---|
@@ -75,9 +75,10 @@ flowchart LR
   errors and an `immutable` cap keep it cheap.
 - **`Collectible`**: ERC-721 with enumeration, EIP-2981 royalties and a paid mint that is exact-price and
   supply-limited. Proceeds are owner-withdrawn with a checked send.
-- **`VaultV1` / `VaultV2`**: an ETH vault behind a UUPS proxy. V2 adds a withdrawal fee (rate capped at 500 bps; the fee rounds up, so splitting a withdrawal never
-  pays less than one withdrawal, and a 1 wei withdrawal pays 1 wei), fee accrual and owner claims. The V2
-  upgrade and its reinitializer run in one transaction.
+- **`VaultV1` / `VaultV2`**: an ETH vault behind a UUPS proxy. V2 adds a withdrawal fee (rate capped at
+  500 bps; the fee rounds up, so splitting a withdrawal never pays less than one withdrawal, and a 1 wei
+  withdrawal pays 1 wei), fee accrual and owner claims. The V2 upgrade and its reinitializer run in one
+  transaction.
 - **Events are the interface for off-chain code.** `Withdrawn` reports the gross amount debited and V2
   emits `FeeCharged` separately, so an indexer can rebuild balances exactly.
 
@@ -96,6 +97,7 @@ browser, and fixed:
 | The dApp page could not load: a bare `"ethers"` import needs an import map | headless Chrome run | import map pinned to the dependency version |
 | Wrong-network and no-contract errors showed a generic message | headless Chrome run | `ClientError` carries its own text |
 | An optimization claim ("constant ~561 gas/recipient") was not true | AI-assisted review, then measured | measured at 1, 2, 10, 50, 100 recipients; claim rewritten |
+| A reentrancy-guard mutant was wrongly labelled "equivalent": re-entering to withdraw the rest of a real balance is observable | AI-assisted review of this documentation | partial-withdrawal attacker and tests for V1 and V2; the mutant is now caught |
 
 ## Testing, in one paragraph
 
@@ -162,4 +164,4 @@ Solidity evidence. [LinkedIn](https://linkedin.com/in/gregory-ward-032447176) ·
 
 ## License
 
-MIT, per the SPDX identifier in each source file.
+MIT: see [LICENSE](LICENSE). Each source file also carries an SPDX identifier.
