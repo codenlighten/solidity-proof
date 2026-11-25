@@ -152,13 +152,9 @@ Slither 0.11.6 · Mythril 0.24.8 · Node 22.
 
 ## About the author
 
-Gregory J. Ward: co-founder and CTO/CDO at SmartLedger Technology since 2020; CompTIA Security+ (2020).
-Background in tamper-evident systems and cryptographic integrity: hash chains and Merkle commitments,
-blockchain anchoring (BSV), and a protocol for verifiable records of human and AI activity using ML-DSA
-signatures. He led the IBM engineering team during the first implementation of CertiHash, a
-tamper-evident cybersecurity architecture.
+Gregory J. Ward: co-founder and CTO/CDO at SmartLedger Technology; CompTIA Security+ (2020).
 
-That background is adjacent to Solidity, not Solidity employment history. This repository is the
+My background is adjacent to Solidity, not Solidity employment history. This repository is the
 Solidity evidence. [LinkedIn](https://linkedin.com/in/gregory-ward-032447176) ·
 [smartledger.technology](https://smartledger.technology)
 
