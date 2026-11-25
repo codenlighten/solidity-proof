@@ -153,7 +153,7 @@ Slither 0.11.6 · Mythril 0.24.8 · Node 22.
 ## About the author
 
 Gregory J. Ward: co-founder and CTO/CDO at SmartLedger Technology since January 2020; CompTIA Security+
-(2020). He led the IBM team on building CertiHash, a tamper-evident cybersecurity architecture.
+(2020).
 
 That background is adjacent to Solidity, not Solidity employment history. This repository is the
 Solidity evidence. [LinkedIn](https://linkedin.com/in/gregory-ward-032447176) ·
