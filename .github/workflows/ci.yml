@@ -37,6 +37,7 @@ jobs:
       - uses: crytic/slither-action@v0.4.0
         with:
           node-version: 22
+          slither-version: 0.11.6   # the version docs/SECURITY.md reports; unpinned, the action takes the latest
           target: .
           slither-args: --compile-force-framework hardhat --hardhat-ignore-compile --filter-paths "node_modules|contracts/test" --exclude-dependencies
           fail-on: none
