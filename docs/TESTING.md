@@ -64,9 +64,9 @@ balance) is still drained by the original attacker, which shows that harness wor
 
 ## Coverage
 
-`npm run coverage` (Hardhat suite only): all files 96.3% statements, 78.6% branches, 90% functions, 100%
+`npm run coverage` (Hardhat suite only): all files 96.4% statements, 81.0% branches, 90.6% functions, 100%
 lines. The four production contracts are at 100% of statements; branch gaps remain in `Collectible`
-(87.5%) and `VaultV2` (75%). Coverage says which lines ran, not that the assertions on them were good;
+(87.5%) and `VaultV2` (85%). Coverage says which lines ran, not that the assertions on them were good;
 that is what the mutation checks are for.
 
 ## Reproducing

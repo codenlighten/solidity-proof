@@ -20,7 +20,7 @@ recorded, and each was checked against the code before acting on it.
 | Contracts | 4 production (`CappedToken`, `Collectible`, `VaultV1`, `VaultV2`) + a gas pair + test helpers |
 | Tests | **40** Hardhat + **15** Foundry (1000-run fuzz, differential fuzz, stateful invariants) |
 | Invariant runs | 256 runs × depth 100 = 25,600 handler calls, 0 reverts, against an independent ledger model |
-| Coverage | 100% of lines; production contracts 100% of statements (all files 96.3%, 78.6% branches) |
+| Coverage | 100% of lines; production contracts 100% of statements (all files 96.4%, 81.0% branches) |
 | Mutation checks | 14 deliberate bugs planted in the contracts, one at a time; the suites fail on every one ([docs/TESTING.md](docs/TESTING.md)) |
 | Static analysis | Slither 0.11.6 (6 results, each with a disposition); Mythril 0.24.8, time-bounded (MythX itself was not used) |
 | CI | 5 jobs on every push: Hardhat tests, Foundry tests, Slither (report only), gitleaks, browser end-to-end. Coverage, Mythril and the mutation runs are manual |
