@@ -1,8 +1,8 @@
 {
   "name": "solidity-proof",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "Reference Solidity contracts with Hardhat and Foundry tests, upgradeability, gas analysis and static analysis.",
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
@@ -14,8 +14,8 @@
     "mythril": "scripts/mythril.sh"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Gregory J. Ward",
+  "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "5.0.0",
     "@openzeppelin/contracts": "5.6.1",
@@ -23,6 +23,5 @@
     "@openzeppelin/hardhat-upgrades": "3.9.1",
     "ethers": "6.17.0",
     "hardhat": "2.29.1"
-  },
-  "private": true
+  }
 }
