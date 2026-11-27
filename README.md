@@ -57,7 +57,7 @@ npm run mythril        # needs Mythril 0.24.8; MYTH_TIMEOUT seconds per contract
 npm run e2e            # browser test; needs Chrome or Chromium
 ```
 
-Node 22. Foundry reads OpenZeppelin from `node_modules`, so there is one pinned copy and no vendored
+Node 22 or later (Hardhat 2.30 requires it). Foundry reads OpenZeppelin from `node_modules`, so there is one pinned copy and no vendored
 test library (the few cheatcodes the tests use are declared in `foundry/test/Base.sol`).
 
 ## Architecture
@@ -147,7 +147,7 @@ docs/             DECISIONS, GAS, TESTING, SECURITY, slither.txt
 
 ## Versions used
 
-solc 0.8.28 (Cancun) · OpenZeppelin 5.6.1 · Hardhat 2.29.1 · ethers 6.17.0 · Foundry (forge) 1.8.6 ·
+solc 0.8.28 (Cancun) · OpenZeppelin 5.6.1 · Hardhat 2.30.0 · ethers 6.17.0 · Foundry (forge) 1.8.6 ·
 Slither 0.11.6 · Mythril 0.24.8 · Node 22.
 
 ## About the author
